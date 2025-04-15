@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, My Love!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Changed Great Vibes weight to 400 -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lato:wght@400;700&family=Dancing+Script:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* --- Global Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .interface {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.2s ease-in-out, visibility 1.2s ease-in-out;
+        }
+
+        .interface.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 1;
+        }
+
+        /* --- Interface 1 Styles --- */
+        #interface1 {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            overflow: hidden;
+            z-index: 3;
+        }
+
+        .intro-text {
+            /* Great Vibes regular weight (400) will be used */
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            color: #ffffff;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6); /* Slightly softer shadow */
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease, text-shadow 0.3s ease;
+            z-index: 5;
+        }
+
+        .intro-text:hover {
+            transform: scale(1.05);
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+        }
+
+        .intro-text .heart-emoji {
+            display: inline-block;
+            animation: subtleBeat 1.5s infinite ease-in-out;
+            color: #ff8fab;
+            text-shadow: 0 0 5px #ff8fab, 0 0 10px #ff8fab;
+        }
+
+        @keyframes subtleBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .stars-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 4;
+        }
+
+        .star {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.7), 0 0 10px rgba(255, 255, 255, 0.5);
+            animation: twinkle 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.4; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- Interface 2 Styles --- */
+         #interface2 {
+            background: linear-gradient(135deg, #ffe5e9, #ffc2d1);
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .message-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            max-width: 800px;
+            width: 85%;
+            position: relative;
+            z-index: 8;
+            min-height: 250px;
+            transition: filter 0.8s ease-out, opacity 0.8s ease-out;
+        }
+
+        .message-container.blurred {
+            filter: blur(8px);
+            opacity: 0.5;
+        }
+
+
+        .message-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.1rem, 2.8vw, 1.6rem);
+            color: #2c2c2c;
+            line-height: 1.8;
+            text-align: left;
+            white-space: pre-wrap;
+            border-right: 3px solid rgba(44, 44, 44, 0.75);
+            display: inline-block;
+            min-width: 1ch;
+            overflow: hidden;
+            vertical-align: bottom;
+            animation: blinkCursor 0.75s step-end infinite;
+        }
+
+        @keyframes blinkCursor {
+            from, to { border-color: transparent; }
+            50% { border-color: rgba(44, 44, 44, 0.75); }
+        }
+
+        .message-text.typing-done {
+            border-right-color: transparent;
+            animation: none;
+        }
+
+        .falling-hearts-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 6;
+        }
+
+        .falling-heart {
+            position: absolute; font-size: 20px;
+            color: rgba(255, 105, 135, 0.6); top: -30px;
+            animation: fallDown 8s infinite linear; user-select: none;
+        }
+
+        @keyframes fallDown {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+             100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+
+        .flight-animation {
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; opacity: 0;
+            transition: opacity 1s ease-in-out 0.5s;
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); z-index: 10;
+            width: 90%; max-width: 500px;
+            background-color: rgba(255, 255, 255, 0.3);
+            padding: 20px; border-radius: 15px;
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+        }
+
+        .flight-animation.visible { display: flex; opacity: 1; }
+
+        .flight-path {
+            display: flex; align-items: center; justify-content: center;
+            gap: 20px; font-size: 3rem; color: #333; margin-bottom: 15px;
+            animation: flyAcross 2s ease-in-out forwards; animation-delay: 0.6s;
+            opacity: 0; text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+
+         @keyframes flyAcross {
+            0% { opacity: 0; transform: translateX(-30px); }
+            40% { opacity: 1; transform: translateX(0); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .flight-path span { display: inline-block; }
+
+        .flight-date {
+            font-family: 'Lato', sans-serif; font-size: 1.5rem; color: #111;
+            font-weight: bold; background-color: rgba(255, 255, 255, 0.6);
+            padding: 8px 18px; border-radius: 8px;
+            animation: fadeInDate 1s 2s ease-in forwards; opacity: 0;
+             text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        @keyframes fadeInDate { to { opacity: 1; } }
+
+
+        /* --- Interface 3 Styles (Puzzle Animation) --- */
+        #interface3 {
+             background-color: #000; /* Black background behind puzzle */
+             z-index: 1;
+             overflow: hidden;
+        }
+
+        .puzzle-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3x3 grid */
+            grid-template-rows: repeat(3, 1fr);
+            overflow: hidden;
+            /* Set the full image as background FOR THE BLUR effect */
+            background-image: url('https://raw.githubusercontent.com/maryam-FOLDS/Alfu/refs/heads/main/IMG_7010.JPG');
+            background-size: contain; /* Match object-fit of pieces */
+            background-position: center center;
+            background-repeat: no-repeat;
+            transition: filter 1.5s ease-in-out; /* Blur transition on container */
+            z-index: 12;
+        }
+
+        .puzzle-container.blurred {
+             filter: blur(12px);
+             transform: scale(1.05); /* Optional zoom */
+        }
+
+        .puzzle-piece {
+            width: 100%;
+            height: 100%;
+            background-image: url('https://raw.githubusercontent.com/maryam-FOLDS/Alfu/refs/heads/main/IMG_7010.JPG');
+            /* background-size needs to be grid dimensions * 100% */
+            background-size: 300% 300%;
+            background-repeat: no-repeat;
+            /* background-position is set by JS */
+            opacity: 0; /* Start hidden */
+            transform-origin: center center;
+            /* Animation is applied when .assembling class is added to container */
+        }
+
+        /* Trigger animation when container has 'assembling' class */
+        .puzzle-container.assembling .puzzle-piece {
+            animation: assemblePuzzle 5s ease-out forwards;
+        }
+
+        @keyframes assemblePuzzle {
+            0% {
+                /* Initial state (random transform) is set by JS */
+                opacity: 0;
+            }
+             100% {
+                transform: translate(0, 0) rotate(0deg); /* End state */
+                opacity: 1;
+             }
+        }
+
+        /* Final Message overlays the puzzle */
+        .final-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2rem, 7vw, 4.5rem);
+            color: white;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            visibility: hidden;
+            z-index: 15; /* Above puzzle */
+            width: 90%;
+        }
+
+        .final-message.visible {
+             opacity: 1;
+             visibility: visible;
+        }
+
+        .final-message .emoji {
+            display: inline-block;
+            animation: beatGlow 1.2s infinite ease-in-out;
+            margin: 0 5px;
+        }
+        /* Stagger emoji animation */
+        .final-message .emoji:nth-child(1) { animation-delay: 0s; }
+        .final-message .emoji:nth-child(2) { animation-delay: 0.2s; }
+        .final-message .emoji:nth-child(3) { animation-delay: 0.4s; }
+
+
+        @keyframes beatGlow {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8), 0 0 5px rgba(255, 255, 255, 0.5);
+            }
+            50% {
+                transform: scale(1.2);
+                text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 182, 193, 0.8);
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Audio Player with loop -->
+    <audio id="birthdayMusic" preload="auto" loop>
+        <source src="https://github.com/maryam-FOLDS/Alfu/raw/refs/heads/main/Die%20With%20A%20Smile%20Song%20Ringtone%20Download%20-%20MobCup.Com.Co%20(1).mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Interface 1: Landing (Space Theme) -->
+    <div id="interface1" class="interface active">
+        <div class="stars-container" id="stars-bg"></div>
+        <h1 class="intro-text" id="introClick">
+            Happy Birthday to the love of my life, my wife <span class="heart-emoji">❤</span>
+        </h1>
+    </div>
+
+    <!-- Interface 2: Message & Flight Animation -->
+    <div id="interface2" class="interface">
+        <div class="falling-hearts-container" id="falling-hearts-bg"></div>
+        <div class="message-container" id="messageContainer">
+            <p class="message-text" id="typedMessage"></p>
+        </div>
+        <div class="flight-animation" id="flightAnimation">
+             <div class="flight-path">
+                 <span title="India">🇮🇳</span>
+                 <span>✈️</span>
+                 <span title="United Kingdom">🇬🇧</span>
+            </div>
+            <div class="flight-date">24 April 2025</div>
+        </div>
+    </div>
+
+    <!-- Interface 3: Puzzle Animation & Final Message -->
+    <div id="interface3" class="interface">
+        <!-- Container for puzzle pieces -->
+        <div class="puzzle-container" id="puzzleContainer">
+            <!-- Puzzle pieces will be added here by JS -->
+        </div>
+        <!-- Final message overlays the puzzle -->
+        <div class="final-message" id="finalMessage">
+            Together stronger forever
+            <span class="emoji">🥹</span>
+            <span class="emoji">🥰</span>
+            <span class="emoji">💝</span>
+        </div>
+    </div>
+
+    <script>
+        // --- Elements ---
+        const interface1 = document.getElementById('interface1');
+        const interface2 = document.getElementById('interface2');
+        const interface3 = document.getElementById('interface3');
+        const introClick = document.getElementById('introClick');
+        const audio = document.getElementById('birthdayMusic');
+        const messageContainer = document.getElementById('messageContainer');
+        const typedMessageElement = document.getElementById('typedMessage');
+        const flightAnimationElement = document.getElementById('flightAnimation');
+        const puzzleContainer = document.getElementById('puzzleContainer'); // Puzzle container
+        const finalMessageElement = document.getElementById('finalMessage');
+        const starsBg = document.getElementById('stars-bg');
+        const fallingHeartsBg = document.getElementById('falling-hearts-bg');
+
+        // --- Configuration ---
+        const message = `Happy Birthday, my love! ❤️ Every moment with you feels like a beautiful chapter in the story of my life 📖 — one I never want to end. You’re not just my wife, but my best friend, my peace, and the reason behind my smile every single day 😊. Your kindness, strength, and endless love make me fall for you over and over again 💖. Today, I just want to remind you how deeply cherished and adored you are 💫. May this year bring you all the happiness your heart desires 🎂🎉, because you deserve the world and more 🌍. I’m so lucky to call you mine — forever and always! 💍❤️`;
+        const typingSpeed = 60;
+        const flightAnimationTotalDuration = 3500;
+        const puzzleAssemblyDuration = 5000; // 5 seconds for puzzle
+        const finalMessageDelay = 500; // Delay after puzzle assembly before blur/text
+        const numberOfStars = 100;
+        const numberOfFallingHearts = 15;
+        const gridRows = 3;
+        const gridCols = 3;
+
+        // --- State ---
+        let fallingHeartInterval;
+
+        // --- Functions ---
+
+        function createStar() {
+            const star = document.createElement('div'); star.classList.add('star');
+            const size = Math.random() * 2 + 1;
+            star.style.width = `${size}px`; star.style.height = `${size}px`;
+            star.style.top = Math.random() * 100 + '%'; star.style.left = Math.random() * 100 + '%';
+            star.style.animationDuration = Math.random() * 1 + 1.5 + 's';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsBg.appendChild(star);
+        }
+
+        function createFallingHeart() {
+             const heart = document.createElement('span'); heart.classList.add('falling-heart');
+             heart.innerHTML = '❤'; heart.style.left = Math.random() * 100 + 'vw';
+             heart.style.fontSize = Math.random() * 15 + 10 + 'px';
+             heart.style.animationDuration = Math.random() * 5 + 5 + 's';
+             heart.style.color = `rgba(255, 105, 135, ${Math.random() * 0.4 + 0.4})`;
+             fallingHeartsBg.appendChild(heart);
+             setTimeout(() => { heart.remove(); }, parseFloat(heart.style.animationDuration) * 1000);
+        }
+
+        function typeWriter(element, text, index = 0) {
+            if (index < text.length) {
+                element.textContent = text.substring(0, index + 1);
+                setTimeout(() => typeWriter(element, text, index + 1), typingSpeed);
+            } else {
+                element.classList.add('typing-done');
+                setTimeout(startBlurAndFlightSequence, 700);
+            }
+        }
+
+        function startBlurAndFlightSequence() {
+            messageContainer.classList.add('blurred');
+            setTimeout(() => { flightAnimationElement.classList.add('visible'); }, 300);
+            setTimeout(() => {
+                interface2.classList.remove('active');
+                interface3.classList.add('active');
+                startInterface3Sequence(); // Start puzzle sequence
+            }, flightAnimationTotalDuration);
+        }
+
+        // Function to setup puzzle pieces
+        function setupPuzzle() {
+            puzzleContainer.innerHTML = ''; // Clear previous pieces
+            puzzleContainer.classList.remove('assembling', 'blurred'); // Reset classes
+            finalMessageElement.classList.remove('visible');
+
+            const pieceWidth = 100 / gridCols;
+            const pieceHeight = 100 / gridRows;
+
+            for (let i = 0; i < gridRows * gridCols; i++) {
+                const piece = document.createElement('div');
+                piece.classList.add('puzzle-piece');
+
+                const row = Math.floor(i / gridCols);
+                const col = i % gridCols;
+
+                // Calculate background position for this piece
+                const bgPosX = col * pieceWidth;
+                const bgPosY = row * pieceHeight;
+                // Apply percentage-based background position directly
+                // Need to adjust percentage based on the fact that the background is 300% x 300%
+                // Example: For top-left (col=0, row=0), pos should be 0% 0%
+                // For middle (col=1, row=1), pos should be 50% 50%
+                // For bottom-right (col=2, row=2), pos should be 100% 100%
+                const correctedBgPosX = (col / (gridCols - 1)) * 100;
+                const correctedBgPosY = (row / (gridRows - 1)) * 100;
+                piece.style.backgroundPosition = `${correctedBgPosX}% ${correctedBgPosY}%`;
+
+
+                // Apply random initial transform and opacity for animation start
+                const randomX = (Math.random() - 0.5) * 300; // Pixels or VW/VH could also work
+                const randomY = (Math.random() - 0.5) * 300;
+                const randomRotate = (Math.random() - 0.5) * 90; // Degrees
+                piece.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRotate}deg)`;
+                piece.style.opacity = '0'; // Start invisible
+
+                puzzleContainer.appendChild(piece);
+            }
+        }
+
+
+        // Interface 3 Sequence: Setup puzzle, start assembly, wait, blur, show text
+        function startInterface3Sequence() {
+             setupPuzzle(); // Create pieces with random positions
+
+            // Add 'assembling' class to start the CSS animation
+            // Use a tiny delay to ensure styles are applied before animation class
+            setTimeout(() => {
+                 puzzleContainer.classList.add('assembling');
+            }, 50);
+
+
+            // Wait for puzzle assembly animation to finish
+            setTimeout(() => {
+                 puzzleContainer.classList.remove('assembling'); // Optional: animation has 'forwards'
+                 puzzleContainer.classList.add('blurred');
+                 finalMessageElement.classList.add('visible');
+            }, puzzleAssemblyDuration + finalMessageDelay); // Wait 5s + delay
+        }
+
+        // --- Event Listeners ---
+        introClick.addEventListener('click', () => {
+            interface1.classList.remove('active');
+            interface2.classList.add('active');
+
+            audio.play().catch(error => { console.log("Audio autoplay failed:", error); });
+
+            messageContainer.classList.remove('blurred');
+            flightAnimationElement.classList.remove('visible');
+            typedMessageElement.textContent = '';
+            typedMessageElement.classList.remove('typing-done');
+
+            typeWriter(typedMessageElement, message);
+
+            if (!fallingHeartInterval) {
+               fallingHeartInterval = setInterval(createFallingHeart, 300);
+            }
+        });
+
+        // --- Initial Setup ---
+        for(let i=0; i < numberOfStars; i++) { createStar(); }
+        for(let i=0; i < numberOfFallingHearts; i++) { setTimeout(createFallingHeart, Math.random() * 500); }
+        // Setup puzzle initially (pieces are hidden until interface 3 is active)
+        // We call setupPuzzle again in startInterface3Sequence to reset positions each time
+        setupPuzzle();
+
+
+    </script>
+
+</body>
+</html>
